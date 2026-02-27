@@ -44,7 +44,7 @@ class UserService:
         if name:
             for users in user_db.values():
                 if users.name == name:
-                    users_list.append(name)
+                    users_list.append(users)
         return users_list
 
     @staticmethod 
