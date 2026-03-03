@@ -1,13 +1,11 @@
 import os
-import shutil
-from fastapi import UploadFile
 
-def save_image(image: UploadFile, folder: str = "images") -> str:
+def save_file(file_bytes: bytes, filename: str, folder: str = "images") -> str:
     os.makedirs(folder, exist_ok=True)
 
-    file_path = os.path.join(folder, image.filename)
+    file_path = os.path.join(folder, filename)
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(image.file, buffer)
+    with open(file_path, "wb") as f:
+        f.write(file_bytes)
 
-    return image.filename
+    return filename

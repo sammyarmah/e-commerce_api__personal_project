@@ -1,4 +1,5 @@
-from fastapi.testclient import TestClient
+from fastapi import HTTPException, status
+from fastapi.testclient import TestClient   
 from app.core.user import user_db
 from app.main import app
 from app.dependency import is_admin_user, is_customer_user
@@ -13,6 +14,7 @@ def client():
 def clear_user_db():
     user_db.clear()
 
+# Creating fake admin user
 @pytest.fixture
 def is_admin():
     fake_admin_user = {
@@ -26,6 +28,22 @@ def is_admin():
     app.dependency_overrides[is_admin_user] = admin_override
     yield fake_admin_user
     app.dependency_overrides = {}
+
+# Creating fake customer user
+@pytest.fixture
+def is_customer():
+    def customer_override():
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail= "Sorry you do not have permission to perform this action"
+        )
+    
+    app.dependency_overrides[is_admin_user] = customer_override
+    yield 
+    app.dependency_overrides = {}
+
+
+
     
 
 
